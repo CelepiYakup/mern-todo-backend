@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const userRoutes = require('./routers/user');
 
 dotenv.config()
 const{
@@ -28,7 +29,12 @@ app.use(express.json())
 
 app.use(cors())
 
+//routes
+app.use('/api/user', userRoutes)
 
+const atRouter = express.Router();
+atRouter.get('/', async(req, res)=>res.send("At router"));
+app.use('/api/at', atRouter);
 
 // DB Confing
 
