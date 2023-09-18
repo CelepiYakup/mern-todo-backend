@@ -13,7 +13,7 @@ const{
     deleteTodo,
 
     
-} = require('./contorllers/todoController')
+} = require('./controllers/todoController')
 
 //App config
 const app = express();
