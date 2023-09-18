@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config()
 const{
     getTodos,
-    getTodoByName,
+    getTodoByID,
     createTodo,
     updateTodo,
     deleteTodo,
@@ -44,7 +44,7 @@ mongoose.connect(connectionURL)
 
 app.get('/todos', getTodos)
 
-app.get('/todo/', getTodoByName);
+app.get('/todos/:id', getTodoByID);
 
 app.post('/todos', createTodo)
 

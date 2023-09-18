@@ -13,12 +13,20 @@ const getTodos = async (req,res) =>{
     }
 }
 
-//Get todo by id
-const getTodoByName = async (req, res) => {
-    const { string } = req.params;
+
+const getTodoByID = async (req, res) => {
+    const { id } = req.params;
     try {
-        console.log(`Getting todo with ID: ${string}`); 
-       
+        // Check the id is valid
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(404).send(`There is no todo with the id of ${id}`);
+        }
+
+        const todo = await Todos.findById(id);
+
+        if (!todo) {
+            return res.status(404).send(`There is no todo with the id of ${id}`);
+        }
 
         res.status(200).send(todo);
     } catch (error) {
@@ -81,7 +89,7 @@ const deleteTodo = async (req,res) =>{
 
 module.exports={
     getTodos,
-    getTodoByName,
+    getTodoByID,
     createTodo,
     updateTodo,
     deleteTodo,
