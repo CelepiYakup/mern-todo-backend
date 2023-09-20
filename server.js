@@ -3,17 +3,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const userRoutes = require('./routers/user');
+const todoRoutes = require('./routers/todo'); 
+const requireAuth = require('./middleware/requireAuth');
 
-dotenv.config()
-const{
-    getTodos,
-    getTodoByID,
-    createTodo,
-    updateTodo,
-    deleteTodo,
 
-    
-} = require('./controllers/todoController')
+dotenv.config();
 
 //App config
 const app = express();
@@ -22,19 +16,20 @@ const port = process.env.PORT || 8080
 
 const connectionURL = process.env.MONGO_URL
 
+app.use(cors());
 // Middlewares
+
+
+
 //convert to json
 
-app.use(express.json())
+app.use(express.json());
 
-app.use(cors())
+
 
 //routes
-app.use('/api/user', userRoutes)
-
-const atRouter = express.Router();
-atRouter.get('/', async(req, res)=>res.send("At router"));
-app.use('/api/at', atRouter);
+app.use('/api/todos', requireAuth, todoRoutes);
+app.use('/api/user', userRoutes);
 
 // DB Confing
 
@@ -46,15 +41,3 @@ mongoose.connect(connectionURL)
     console.log(err);
 });
 
-// API Endpoint
-
-app.get('/todos', getTodos)
-
-app.get('/todos/:id', getTodoByID);
-
-app.post('/todos', createTodo)
-
-app.patch('/todos/:id', updateTodo)
-
-
-app.delete('/todos/:id', deleteTodo)
