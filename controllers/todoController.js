@@ -1,18 +1,16 @@
-const mongoose = require('mongoose')
-const Todos = require('../dbTodos')
+const mongoose = require('mongoose');
+const Todo = require('../dbTodos');
 
-//Get Todos List
-const getTodos = async (req,res) =>{
-    try{
-        const allTodos = await Todos.find({}).sort({createdAt: -1})
-        res.status(200).send(allTodos);
-    }
-    catch(error){
-        res.status(400).send(error.message);
-
-    }
-}
-
+// Get a Todo
+const getTodos = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const todos = await Todo.find({ user_id }).sort({ createdAt: -1 });
+    res.status(200).json(todos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const getTodoByID = async (req, res) => {
     const { id } = req.params;
@@ -34,63 +32,56 @@ const getTodoByID = async (req, res) => {
     }
 };
 
-//Create Todos List
-const createTodo = async (req,res) =>{
-    const dbTodo = req.body;
-    try{
-        const newTodo = await Todos.create(dbTodo)
-        res.status(201).send(newTodo);
+// Create new Todo
+const createTodo = async (req, res) => {
+  const dbTodo = req.body;
+  try {
+    const newTodo = await Todo.create({ ...dbTodo, user_id: req.user._id });
+    res.status(201).json(newTodo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Update Todo
+const updateTodo = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Check the id is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json(`No Todo found with ID ${id}`);
     }
-    catch(error){
-        res.status(500).send(error.message);
-
+    const todoID = { _id: id };
+    const update = { completed: true };
+    const updatedTodo = await Todo.findOneAndUpdate(todoID, update);
+    if (!updatedTodo) {
+      return res.status(404).json(`No Todo found with ID ${id}`);
     }
-}
+    res.status(200).json(updatedTodo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-//update Todo
-const updateTodo = async (req,res) =>{
-    const {id} = req.params
-    try{
-        // Check the id is valid 
-        if(!mongoose.Types.ObjectId.isValid(id)){
-            return res.status(404).send(`There is todo with the id of ${id}`)
-        }
-        const todoID = {_id: id};
-        const update = { completed: true};
-        const updateTodo = await Todos.findOneAndUpdate(todoID, update)
-        if(!updateTodo){
-            return res.status(404).send(`There is todo with the id of ${id}`)
-        }
-        res.status(200).send(updateTodo);
+// Delete Todo
+const deleteTodo = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Check the id is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json(`No Todo found with ID ${id}`);
     }
-    catch(error){
-        res.status(500).send(error.message);
+    const deletedTodo = await Todo.findOneAndDelete({ _id: id });
+    res.status(200).json(deletedTodo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    }
-}
-
-//delete Todo
-const deleteTodo = async (req,res) =>{
-    const { id } = req.params
-    try{
-        // Check the id is valid 
-        if(!mongoose.Types.ObjectId.isValid(id)){
-            return res.status(404).send(`There is todo with the id of ${id}`)
-        }
-
-        const deleteTodo = await Todos.findOneAndDelete({_id: id })
-        res.status(200).send(deleteTodo);
-    }
-    catch(error){
-        res.status(500).send(error.message);
-
-    }
-}
-
-module.exports={
-    getTodos,
-    getTodoByID,
-    createTodo,
-    updateTodo,
-    deleteTodo,
+module.exports = {
+  getTodos,
+  getTodoByID,
+  createTodo,
+  updateTodo,
+  deleteTodo,
 };
