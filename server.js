@@ -10,7 +10,7 @@ dotenv.config();
 
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT ;
 const connectionURL = process.env.MONGO_URL;
 
 app.use(cors());
