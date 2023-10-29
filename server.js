@@ -15,10 +15,10 @@ const connectionURL = process.env.MONGO_URL;
 
 app.use(cors());
 
-
+const version = "0.1.0"
 app.use(express.json());
 
-
+app.use('/',(req, res) => res.text(version));
 app.use('/api/todos', requireAuth, todoRoutes);
 app.use('/api/user', userRoutes);
 
