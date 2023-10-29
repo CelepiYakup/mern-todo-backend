@@ -18,7 +18,7 @@ app.use(cors());
 const version = "0.1.0"
 app.use(express.json());
 
-app.use('/',(req, res) => res.text(version));
+app.use('/',(req, res) => res.send(version));
 app.use('/api/todos', requireAuth, todoRoutes);
 app.use('/api/user', userRoutes);
 
