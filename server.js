@@ -16,7 +16,7 @@ const connectionURL = process.env.MONGO_URL;
 app.use(cors({
   origin: 
   ["https://localhost:3000", 
-  "https://mern-todo-task.onrender.com"],
+  "https://mern-todo-task-api.onrender.com"],
   })
 );
 
